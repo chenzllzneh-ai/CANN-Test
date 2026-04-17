@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="27px" viewBox="0 0 17 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>bolt.fill</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bolt.fill" fill="#000000" fill-rule="nonzero">
+            <rect id="矩形" opacity="0" x="0" y="0" width="16.5117" height="26.3734"></rect>
+            <path d="M0,14.5402 C0,14.9972 0.351562,15.3371 0.84375,15.3371 L7.46484,15.3371 L3.97266,24.8293 C3.51562,26.0363 4.76953,26.6808 5.55469,25.6965 L16.207,12.384 C16.4062,12.1379 16.5117,11.9035 16.5117,11.634 C16.5117,11.1887 16.1602,10.8371 15.668,10.8371 L9.04688,10.8371 L12.5391,1.34491 C12.9961,0.137874 11.7422,-0.506657 10.957,0.489437 L0.304688,13.7902 C0.105469,14.048 0,14.2824 0,14.5402 Z" id="路径" fill-opacity="0.85"></path>
+        </g>
+    </g>
+</svg>

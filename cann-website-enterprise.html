@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CANN — 昇腾异构计算架构</title>
+<style>
+:root {
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f7f8fa;
+  --color-bg-muted: #f2f4f7;
+  --color-surface: #ffffff;
+  --color-surface-dark: #121212;
+
+  --color-text: #1f2329;
+  --color-text-secondary: #5b6472;
+  --color-text-tertiary: #8a93a3;
+  --color-text-inverse: #ffffff;
+  --color-text-inverse-secondary: #bababa;
+
+  --color-border: #e5e8ef;
+  --color-divider: #eceff3;
+
+  --color-brand: #c7001a;
+  --color-brand-hover: #a50016;
+  --color-brand-soft: rgba(199, 0, 26, 0.08);
+
+  --shadow-sm: 0 4px 12px rgba(31, 35, 41, 0.06);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  --font-family-base: Inter, "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-size-caption: 12px;
+  --line-height-caption: 18px;
+  --font-size-body: 14px;
+  --line-height-body: 22px;
+  --font-size-title-sm: 20px;
+  --line-height-title-sm: 30px;
+  --font-size-title-md: 28px;
+  --line-height-title-md: 38px;
+  --font-size-title-lg: 40px;
+  --line-height-title-lg: 52px;
+
+  --container-width: 1200px;
+  --transition-fast: 180ms ease-out;
+  --transition-base: 220ms ease-out;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  min-width: 320px;
+}
+
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+.container {
+  width: min(100% - 48px, var(--container-width));
+  margin: 0 auto;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.site-header__inner {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav__link {
+  height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  font-weight: 500;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.nav__link:hover,
+.nav__link.is-active {
+  color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+.hero {
+  padding: var(--space-8) 0;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+}
+
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 32px;
+  padding: 0 var(--space-3);
+  border-radius: 999px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-caption);
+  font-weight: 600;
+}
+
+.hero__title {
+  margin: var(--space-4) 0 var(--space-4);
+  font-size: var(--font-size-title-lg);
+  line-height: var(--line-height-title-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.hero__desc {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-secondary);
+  max-width: 720px;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.hero-visual {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  min-height: 420px;
+}
+
+.section {
+  padding: var(--space-8) 0;
+}
+
+.section--subtle {
+  background: var(--color-bg-subtle);
+}
+
+.section__header {
+  margin-bottom: var(--space-6);
+}
+
+.section__title {
+  margin: 0;
+  font-size: var(--font-size-title-md);
+  line-height: var(--line-height-title-md);
+  font-weight: 600;
+}
+
+.section__desc {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-secondary);
+  max-width: 760px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  transition: border-color var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  border-color: rgba(199, 0, 26, 0.22);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.card__title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-title-sm);
+  line-height: var(--line-height-title-sm);
+  font-weight: 600;
+}
+
+.card__desc {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: 500;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+}
+
+.btn--primary:hover {
+  background: var(--color-brand-hover);
+}
+
+.btn--secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover {
+  background: var(--color-bg-subtle);
+}
+
+.code-block {
+  margin-top: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #f6f7f9;
+  padding: var(--space-4);
+  overflow-x: auto;
+}
+
+.code-block code,
+.code-block pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  line-height: 22px;
+  color: #2b313b;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.site-footer {
+  margin-top: var(--space-8);
+  background: var(--color-surface-dark);
+  color: var(--color-text-inverse-secondary);
+}
+
+.site-footer__inner {
+  padding-top: 50px;
+  padding-bottom: var(--space-6);
+}
+
+.footer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-6);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: var(--space-6);
+}
+
+.footer-col {
+  min-width: 216px;
+  width: auto;
+}
+
+.footer-col__title {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-inverse);
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-list a {
+  display: block;
+  color: var(--color-text-inverse-secondary);
+  font-size: 12px;
+  line-height: 18px;
+  padding: 6px 0;
+  transition: color var(--transition-fast);
+}
+
+.footer-list a:hover {
+  color: var(--color-text-inverse);
+}
+
+.footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  color: var(--color-text-inverse-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+@media (max-width: 840px) {
+  .hero__grid,
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="container">
+    <div class="site-header__inner">
+      <a href="#" class="brand">
+        <span class="brand__mark">C</span>
+        CANN
+      </a>
+      <nav class="nav">
+        <a href="#" class="nav__link is-active">首页</a>
+        <a href="#" class="nav__link">文档</a>
+        <a href="#" class="nav__link">学习</a>
+        <a href="#" class="nav__link">API 参考</a>
+        <a href="#" class="nav__link">社区</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero__grid">
+      <div>
+        <span class="hero__eyebrow">CANN 8.0 正式发布</span>
+        <h1 class="hero__title">昇腾 AI 异构<br>计算架构</h1>
+        <p class="hero__desc">CANN（Compute Architecture for Neural Networks）是华为针对 AI 场景推出的异构计算架构，全面支持昇腾 NPU，为 AI 应用开发者提供从算子开发到网络部署的完整工具链。</p>
+        <div class="hero__actions">
+          <button class="btn btn--primary">快速开始</button>
+          <button class="btn btn--secondary">查看文档</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="code-block">
+          <pre><code>import ascendcl
+import numpy as np
+
+# 初始化 CANN 运行环境
+ret = ascendcl.init()
+context = ascendcl.rt.create_context(0)
+
+# 分配设备内存
+device_ptr, ret = ascendcl.rt.malloc(1024, 0)
+
+# 数据传输
+ascendcl.rt.memcpy(device_ptr, host_ptr, 1024, 1)</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section section--subtle">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">核心特性</h2>
+      <p class="section__desc">为 AI 开发者提供完整的异构计算工具链</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card__icon">A</div>
+        <h3 class="card__title">AscendCL 编程接口</h3>
+        <p class="card__desc">类 CUDA 编程接口，支持 C/C++ 开发，提供设备管理、内存管理、算子调用等完整 API。</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">T</div>
+        <h3 class="card__title">TBE 算子开发</h3>
+        <p class="card__desc">基于 Python 的算子开发框架，支持自定义算子，提供丰富的 DSL 和调试工具。</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">M</div>
+        <h3 class="card__title">MindSpore 深度集成</h3>
+        <p class="card__desc">与 MindSpore 框架深度集成，支持训练和推理全流程，提供最佳性能。</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">C</div>
+        <h3 class="card__title">模型转换优化</h3>
+        <p class="card__desc">ATC 工具支持 TensorFlow、PyTorch、ONNX 等主流框架模型转换。</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">P</div>
+        <h3 class="card__title">性能分析工具</h3>
+        <p class="card__desc">完整的性能分析和调优工具链，帮助开发者快速定位性能瓶颈。</p>
+      </div>
+      <div class="card">
+        <div class="card__icon">D</div>
+        <h3 class="card__title">开发者生态</h3>
+        <p class="card__desc">丰富的文档、示例代码和社区支持，助力开发者快速上手。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__inner">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3 class="footer-col__title">文档</h3>
+          <ul class="footer-list">
+            <li><a href="#">快速开始</a></li>
+            <li><a href="#">开发指南</a></li>
+            <li><a href="#">API 参考</a></li>
+            <li><a href="#">示例代码</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-col__title">学习</h3>
+          <ul class="footer-list">
+            <li><a href="#">教程</a></li>
+            <li><a href="#">视频课程</a></li>
+            <li><a href="#">最佳实践</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-col__title">社区</h3>
+          <ul class="footer-list">
+            <li><a href="#">论坛</a></li>
+            <li><a href="#">GitHub</a></li>
+            <li><a href="#">贡献指南</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-col__title">关于</h3>
+          <ul class="footer-list">
+            <li><a href="#">关于 CANN</a></li>
+            <li><a href="#">发布说明</a></li>
+            <li><a href="#">联系我们</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-meta">
+        <div>© 2024 Huawei Technologies Co., Ltd. 保留所有权利。</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
